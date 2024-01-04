@@ -3,19 +3,17 @@ import { Todo } from "./model";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { MdDone } from "react-icons/md";
 import "./styles.css";
-import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   t: Todo;
   todos: Todo[];
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  index: number;
 };
-
-const SingleTodo = ({ t, todos, setTodos, index }: Props) => {
+const SingleTodo = ({ t, todos, setTodos }: Props) => {
+  
   const [edit, setEdit] = useState<boolean>(false);
   const [editTodo, setEditTodo] = useState<string>(t.todo);
-
+  
   const handleDone = (id: number) => {
     // ...t means we're taking all of the ppties of that particular todo and change a particular ppty(isDone in this case)
     setTodos(todos.map((t) => (t.id === id ? { ...t, isDone: !t.isDone } : t)));
@@ -35,15 +33,13 @@ const SingleTodo = ({ t, todos, setTodos, index }: Props) => {
   }, [edit]);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  localStorage.setItem('todolist', JSON.stringify(todos)) 
+  const todoList = localStorage.getItem('todolist')
+   
   return (
-    <Draggable draggableId={t.id.toString()} index={index}>
-      {(provided, snapshot) => (
         <form
-          className={`todos__single ${snapshot.isDragging? 'drag' : ''}`}
+          className='todos__single'
           onSubmit={(e) => handleEdit(e, t.id)}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
         >
           {edit ? (
             <input
@@ -57,7 +53,7 @@ const SingleTodo = ({ t, todos, setTodos, index }: Props) => {
           ) : (
             <span className="todos__single--text">{t.todo}</span>
           )}
-
+      
           <div>
             <span
               className="icon"
@@ -78,8 +74,6 @@ const SingleTodo = ({ t, todos, setTodos, index }: Props) => {
             </span>
           </div>
         </form>
-      )}
-    </Draggable>
   );
 };
 
